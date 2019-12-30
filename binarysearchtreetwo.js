@@ -3,6 +3,45 @@ class Node {
         this.data = data;
         this.left = null;
         this.right = null;
+        this.next = null;
+    }
+}
+
+class Queue {
+    constructor() {
+        this.first = null;
+        this.last = null;
+    }
+
+    enqueue(data) {
+        const node = new Node(data);
+
+        if (this.first === null) {
+            this.first = node;
+        }
+
+        if (this.last !== null) {
+            this.last.next = node;
+        }
+
+        this.last = node;
+    }
+
+    dequeue() {
+        if (this.first === null) {
+            return
+        }
+
+        let node = this.first;
+
+        this.first = this.first.next;
+
+        if (node === this.last) {
+            this.last = null;
+        }
+
+        return node.value;
+
     }
 }
 
@@ -92,6 +131,27 @@ class BinarySearchTree {
 
     }
 
+    preorder(node) {
+        //visit root
+        //traverse left subtree (this.inorder on left subtree)
+        //traverse the right subtree (this.inorder on right subtree)
+
+        if (node !== null) {
+            console.log(node.data);
+            this.preorder(node.left);
+            this.preorder(node.right);
+        }
+    }
+
+    postorder(node) {
+        //Traverse left subtree
+        //Traverse right subtree
+        //Visit root
+        this.postorder(node.left);
+        this.postorder(node.right);
+        console.log(node.data);
+    }
+
     findMinNode(node) {
         if (node.left === null) {
             return node;
@@ -130,6 +190,25 @@ class BinarySearchTree {
         }
 
         return Math.max(this.getHeight(node.left), this.getHeight(node.right)) + 1;
+    }
+
+    bfs(node, values = []) {
+        const queue = new Queue();
+        queue.enqueue(node);
+        while (queue.length) {
+            const node = queue.dequeue();
+            values.push(node.value);
+
+            if (node.left) {
+                queue.enqueue(node.left);
+            }
+
+            if (node.right) {
+                queue.enqueue(node.right);
+            }
+        }
+
+        return values;
     }
 
 }
@@ -268,3 +347,75 @@ let arr2 = [3, 5, 4, 6, 1, 0, 3];
 
 console.log(isSame(arr1, arr2))
 
+const assignmentBST = new BinarySearchTree();
+
+assignmentBST.insert(25);
+assignmentBST.insert(15);
+assignmentBST.insert(50);
+assignmentBST.insert(10);
+assignmentBST.insert(24);
+assignmentBST.insert(35);
+assignmentBST.insert(70);
+assignmentBST.insert(4);
+assignmentBST.insert(12);
+assignmentBST.insert(18);
+assignmentBST.insert(31);
+assignmentBST.insert(44);
+assignmentBST.insert(66);
+assignmentBST.insert(90);
+assignmentBST.insert(22);
+
+/* console.log(assignmentBST.preorder()) */
+
+//6) Find the next commanding officer (search algorithms assignments)
+
+let commandTree = new BinarySearchTree();
+
+commandTree.insert(45)
+commandTree.insert(35)
+commandTree.insert(42)
+commandTree.insert(34)
+commandTree.insert(33)
+commandTree.insert(46)
+commandTree.insert(55)
+commandTree.insert(53)
+
+let orderOfCommand = function(tree, node) {
+    return tree.bfs(node)
+}
+
+console.log(orderOfCommand(commandTree, commandTree.root))
+
+//7) Max profit:
+//share price for company over a week is: [128, 97, 121, 123, 98,  97, 105]
+
+let priceArray = [128, 97, 121, 123, 98, 97, 105];
+
+
+function getMaxProfit(priceArray) {
+    if (priceArray.length < 2) {
+        throw new Error('Getting a profit requires at least 2 prices');
+    }
+
+    let minPrice = priceArray[0];
+
+    let maxProfit = priceArray[1] - priceArray[0];
+
+    let minIndex = 0;
+
+    for (let i = 1; i < priceArray.length; i++) {
+        if (priceArray[i] - minPrice > maxProfit) {
+            maxProfit = priceArray[i] - minPrice;
+        }
+
+        if (priceArray[i] < minPrice && i !== priceArray.length - 1) {
+            minPrice = priceArray[i];
+            minIndex = i;
+        }
+    }
+
+    return maxProfit;
+}
+
+
+console.log(getMaxProfit(priceArray))
